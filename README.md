@@ -28,10 +28,23 @@ dotnet test tests/LogPipe.Search.Tests/LogPipe.Search.Tests.csproj -c Release
 
 Tests use Testcontainers (Elasticsearch) — Docker must be running.
 
+## API
+
+All endpoints require a bearer token with scope `logs:read`
+(get one from the ingest issuer: `POST /connect/token`, client `logpipe-reader`).
+
+- `GET /v1/logs?q=&level=&service=&page=&size=` — search (`q` is fuzzy on the message).
+  Returns `{ total, hits[], facets: { levels[], services[] } }`.
+- `GET /v1/logs/trace/{traceId}` — all entries of one trace, ascending by timestamp.
+
+Run it standalone: set `Elasticsearch__Url`, `Jwt__Authority` (the ingest URL), optional
+`Retention__Days`; `docker compose` users get both from the hub repo (logpipe-ui).
+
 ## Decisions
 
 - [ADR-0001](docs/adr/ADR-0001-elasticsearch-storage.md) — daily indices `logs-yyyy.MM.dd`, template `logpipe-logs`, doc id = entry id for idempotent retries
 - [ADR-0002](docs/adr/ADR-0002-oidc-discovery-validation.md) — pure resource server via JwtBearer discovery; no shared secrets
+- [ADR-0003](docs/adr/ADR-0003-retention-and-alias.md) — code-managed hourly retention + `logs-current` alias
 
 ## Roadmap
 

@@ -1,4 +1,6 @@
 using Elastic.Clients.Elasticsearch;
+using LogPipe.Search.Api;
+using LogPipe.Search.Auth;
 using LogPipe.Search.Grpc;
 using LogPipe.Search.Storage;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -51,11 +53,13 @@ builder.Services
             ValidateAudience = false // OpenIddict access tokens carry scopes, not aud, in F2
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options => options.AddLogPipePolicies());
 
 builder.Services.AddSingleton<IngestedEntryProcessor>();
 builder.Services.AddGrpc();
 builder.Services.AddHostedService<ElasticsearchSetup>();
+builder.Services.AddSingleton<IndexMaintenance>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<IndexMaintenance>());
 
 builder.Services.AddOpenTelemetry()
     .WithMetrics(metrics => metrics
@@ -73,6 +77,7 @@ app.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = static 
 app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = static r => r.Tags.Contains("ready") });
 app.UseOpenTelemetryPrometheusScrapingEndpoint("/metrics");
 app.MapGrpcService<LogIngestServiceImpl>();
+app.MapSearchEndpoints();
 
 app.Run();
 
