@@ -10,6 +10,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENV Kestrel__Endpoints__http__Url=http://+:8091
+ENV Kestrel__Endpoints__grpc__Url=http://+:8093
 EXPOSE 8091
+EXPOSE 8093
 USER $APP_UID
 ENTRYPOINT ["dotnet", "LogPipe.Search.dll"]
