@@ -8,8 +8,7 @@ namespace LogPipe.Search.Tests;
 
 public sealed class ContainersFixture : IAsyncLifetime
 {
-    private readonly IContainer _es = new ContainerBuilder()
-        .WithImage("docker.elastic.co/elasticsearch/elasticsearch:9.5.4")
+    private readonly IContainer _es = new ContainerBuilder("docker.elastic.co/elasticsearch/elasticsearch:9.5.4")
         .WithEnvironment("discovery.type", "single-node")
         .WithEnvironment("xpack.security.enabled", "false")
         .WithEnvironment("ES_JAVA_OPTS", "-Xms512m -Xmx512m")
