@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 ADD https://github.com/TiagoR85/logpipe-contracts.git#v1.0.0 /tmp/contracts
 RUN dotnet pack /tmp/contracts/src/LogPipe.Contracts/LogPipe.Contracts.csproj -c Release -o /tmp/contract-packages
