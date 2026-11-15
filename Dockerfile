@@ -6,7 +6,7 @@ COPY . .
 RUN mkdir -p /src/packages && cp /tmp/contract-packages/*.nupkg /src/packages/
 RUN dotnet publish src/LogPipe.Search/LogPipe.Search.csproj -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENV Kestrel__Endpoints__http__Url=http://+:8091
